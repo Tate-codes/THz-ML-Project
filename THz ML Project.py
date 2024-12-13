@@ -13,7 +13,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.preprocessing import MinMaxScaler
 
 # Read the Excel file into a pandas DataFrame
-df = pd.read_excel('Noncorrupted Dataset.xlsx', header=None)  # Replace 'your_file.xlsx' with the path to your file
+df = pd.read_excel('Noncorrupted Dataset.xlsx', header=None)  # Replace the file with the path to your file
 
 # Convert the DataFrame to a NumPy array
 data = df.to_numpy()  # or df.values
@@ -27,10 +27,6 @@ y_clean= pd.to_numeric(data[:, 1])
 noise = np.random.normal(0, .0000001, y_clean.shape)
 y_noisy = y_clean + noise
 
-# # Normalize x and y
-# x_normalized = (x - x.min()) / (x.max() - x.min())
-# y_normalized = (y_noisy - y_noisy.min()) / (y_noisy.max() - y_noisy.min())
-# y_normalized_clean = (y_clean - y_clean.min()) / (y_clean.max() - y_clean.min())
 
 # Combine x and y for input to the autoencoder
 data_noisy = np.vstack((x, y_noisy)).T
@@ -57,7 +53,7 @@ output_layer = Dense(2, activation='linear')(decoded)
 
 # Build and compile the model
 autoencoder = Model(inputs=input_layer, outputs=output_layer)
-autoencoder.compile(optimizer=Adam(learning_rate=0.02), loss='mse')
+autoencoder.compile(optimizer=Adam(learning_rate=0.01), loss='mse')
 
 print("x values:", x[:10])
 print("y_clean values:", y_clean[:10])
@@ -66,10 +62,10 @@ print("y_noisy values:", y_noisy[:10])
 
 # Train the model
 history = autoencoder.fit(
-    data_noisy_scaled,  # Input (noisy data)
-    data_clean_scaled,  # Target (clean data)
+    data_noisy_scaled,  
+    data_clean_scaled,  
     epochs=5000,
-    batch_size=32,
+    batch_size=16,
     validation_split=0.2,
     verbose=1
 )
